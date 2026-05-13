@@ -15,7 +15,7 @@ export async function generateDocumentation(
     api: `Generate API reference documentation for this ${language} code. Document all public functions, parameters, return types, and include usage examples.`,
     full: `You are an expert technical writer. Analyze this ${language} code and generate complete documentation including:
 
-1. **README.md** — Project overview, installation, usage, configuration
+1. **README.md** — Project overview, installation, usage, configuration  
 2. **API Reference** — All functions/methods with parameters, types, return values, examples
 3. **Inline Comments** — Annotated version of the code with JSDoc/docstrings
 
@@ -23,36 +23,35 @@ Format everything in clean, well-structured Markdown.`,
   };
 
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    "https://api.groq.com/openai/v1/chat/completions",
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+      },
       body: JSON.stringify({
-        contents: [
+        model: "llama-3.3-70b-versatile",
+        messages: [
           {
-            parts: [
-              {
-                text: `${prompts[docType]}\n\n\`\`\`${language}\n${code}\n\`\`\``,
-              },
-            ],
+            role: "user",
+            content: `${prompts[docType]}\n\n\`\`\`${language}\n${code}\n\`\`\``,
           },
         ],
-        generationConfig: {
-          maxOutputTokens: 4096,
-          temperature: 0.3,
-        },
+        max_tokens: 4096,
+        temperature: 0.3,
       }),
     }
   );
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error?.message ?? "Gemini API error");
+    throw new Error(error.error?.message ?? "Groq API error");
   }
 
   const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-  const tokensUsed = data.usageMetadata?.totalTokenCount ?? 0;
+  const text = data.choices?.[0]?.message?.content ?? "";
+  const tokensUsed = data.usage?.total_tokens ?? 0;
 
   return { documentation: text, tokensUsed };
 }
