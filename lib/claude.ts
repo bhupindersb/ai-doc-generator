@@ -1,10 +1,4 @@
 // lib/claude.ts
-import Anthropic from "@anthropic-ai/sdk";
-
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
 export type DocGenerationResult = {
   documentation: string;
   tokensUsed: number;
@@ -28,25 +22,37 @@ export async function generateDocumentation(
 Format everything in clean, well-structured Markdown.`,
   };
 
-  const message = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 4096,
-    messages: [
-      {
-        role: "user",
-        content: `${prompts[docType]}
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: `${prompts[docType]}\n\n\`\`\`${language}\n${code}\n\`\`\``,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          maxOutputTokens: 4096,
+          temperature: 0.3,
+        },
+      }),
+    }
+  );
 
-\`\`\`${language}
-${code}
-\`\`\``,
-      },
-    ],
-  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error?.message ?? "Gemini API error");
+  }
 
-  const text =
-    message.content[0].type === "text" ? message.content[0].text : "";
-  const tokensUsed =
-    message.usage.input_tokens + message.usage.output_tokens;
+  const data = await response.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  const tokensUsed = data.usageMetadata?.totalTokenCount ?? 0;
 
   return { documentation: text, tokensUsed };
 }
