@@ -1,0 +1,80 @@
+# .github/workflows/auto-docs.yml
+# Team Plan Feature: Automatically generate documentation for changed files on every PR.
+# Install this in your CUSTOMER's repositories by providing the DocAI GitHub Action.
+
+name: DocAI — Auto Documentation
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "**.ts"
+      - "**.tsx"
+      - "**.js"
+      - "**.py"
+      - "**.go"
+      - "**.rs"
+
+jobs:
+  generate-docs:
+    name: Generate Documentation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed
+        run: |
+          FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -E '\.(ts|tsx|js|py|go|rs)$' | head -10)
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+
+      - name: Generate docs via DocAI API
+        if: steps.changed.outputs.files != ''
+        env:
+          DOCAI_API_KEY: ${{ secrets.DOCAI_API_KEY }}
+          DOCAI_URL: https://your-docai-domain.vercel.app
+        run: |
+          mkdir -p docs/generated
+
+          for FILE in ${{ steps.changed.outputs.files }}; do
+            echo "Generating docs for: $FILE"
+            
+            CODE=$(cat "$FILE" | jq -Rs .)
+            LANG=$(echo "$FILE" | sed 's/.*\.//')
+            
+            RESPONSE=$(curl -s -X POST "$DOCAI_URL/api/generate-public" \
+              -H "Authorization: Bearer $DOCAI_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d "{\"code\": $CODE, \"language\": \"$LANG\", \"docType\": \"readme\"}")
+            
+            DOC=$(echo $RESPONSE | jq -r '.documentation')
+            BASENAME=$(basename "$FILE" | sed 's/\.[^.]*$//')
+            echo "$DOC" > "docs/generated/${BASENAME}.md"
+          done
+
+      - name: Commit generated docs
+        if: steps.changed.outputs.files != ''
+        run: |
+          git config user.name "DocAI Bot"
+          git config user.email "bot@docai.app"
+          git add docs/generated/
+          git diff --staged --quiet || git commit -m "docs: auto-generate documentation [DocAI]"
+          git push
+
+      - name: Comment on PR
+        if: steps.changed.outputs.files != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `📝 **DocAI** has generated documentation for the changed files in \`docs/generated/\`. Review and merge!`
+            })
