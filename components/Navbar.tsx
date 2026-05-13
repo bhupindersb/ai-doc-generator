@@ -9,8 +9,16 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-ink-900/80 backdrop-blur-md border-b border-ink-800">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="font-display font-bold text-xl tracking-tight">
-          Doc<span className="text-lime">AI</span>
+        <Link href="/" className="flex items-center gap-2.5">
+          <svg width="28" height="28" viewBox="0 0 44 44" fill="none">
+            <rect width="44" height="44" rx="12" fill="#C8F135"/>
+            <rect x="10" y="13" width="16" height="2.5" rx="1.25" fill="#0A0A0F"/>
+            <rect x="10" y="19" width="24" height="2.5" rx="1.25" fill="#0A0A0F"/>
+            <rect x="10" y="25" width="20" height="2.5" rx="1.25" fill="#0A0A0F"/>
+            <circle cx="33" cy="13" r="4" fill="#0A0A0F"/>
+            <path d="M31 13L32.5 14.5L35.5 11.5" stroke="#C8F135" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="font-display font-bold text-xl">Doc<span className="text-lime">AI</span></span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8 text-sm text-ink-200">

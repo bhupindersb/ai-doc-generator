@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description:
     "Generate beautiful, comprehensive documentation for any codebase in seconds. READMEs, API docs, inline comments — all powered by Claude AI.",
   keywords: ["documentation", "AI", "developer tools", "code", "README"],
+  icons: {
+    icon: "/logo.svg",
+    apple: "/logo.svg",
+  },
   openGraph: {
     title: "DocAI — AI-Powered Code Documentation",
     description: "Generate docs for any codebase in seconds.",
