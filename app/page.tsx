@@ -364,7 +364,7 @@ function getAuthUser() {
 
       {/* ─────────────────── LANGUAGE MARQUEE ─────────────────── */}
       <section className="py-16 px-6 border-t border-ink-800 overflow-hidden">
-        <p className="text-xs font-mono text-ink-600 text-center mb-6 uppercase tracking-widest">
+        <p className="text-xs font-mono text-ink-400 text-center mb-6 uppercase tracking-widest">
           Works with every language your team uses
         </p>
         <div className="flex gap-3 flex-wrap justify-center max-w-4xl mx-auto">
@@ -545,10 +545,10 @@ function getAuthUser() {
 
           {/* Bottom bar */}
           <div className="border-t border-ink-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-xs font-mono text-ink-600">
+            <p className="text-xs font-mono text-ink-400">
               © {new Date().getFullYear()} DocAI by Beveez Tech. All rights reserved.
             </p>
-            <div className="flex items-center gap-6 text-xs font-mono text-ink-600">
+            <div className="flex items-center gap-6 text-xs font-mono text-ink-400">
               <span>Built with Claude AI + Next.js</span>
               <span>·</span>
               <span>Hosted on Vercel</span>
