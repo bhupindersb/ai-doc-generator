@@ -342,7 +342,7 @@ function getAuthUser() {
 
           <div className="grid md:grid-cols-3 gap-12 relative">
             {/* Connector lines (desktop only) */}
-            <div className="hidden md:block absolute top-8 left-1/3 right-1/3 h-px bg-gradient-to-r from-lime/20 via-lime/40 to-lime/20" />
+            {/* <div className="hidden md:block absolute top-8 left-1/3 right-1/3 h-px bg-gradient-to-r from-lime/20 via-lime/40 to-lime/20" /> */}
 
             {steps.map((s, i) => (
               <div key={s.n} className="relative">
@@ -350,7 +350,7 @@ function getAuthUser() {
                   <div className="w-14 h-14 rounded-2xl bg-lime/10 border border-lime/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl font-display font-bold text-lime">{s.n}</span>
                   </div>
-                  {i < 2 && (
+                  {i < 3 && (
                     <div className="hidden md:block flex-1 h-px bg-gradient-to-r from-lime/20 to-transparent" />
                   )}
                 </div>
