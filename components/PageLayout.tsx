@@ -1,28 +1,38 @@
 // components/PageLayout.tsx
-// Shared wrapper for all marketing pages
 import Link from "next/link";
 import { Navbar } from "./Navbar";
 
 const footerLinks = {
-  Product:    ["Features", "Pricing", "Changelog", "Roadmap"],
-  Developers: ["API Docs", "GitHub Action", "Integrations", "Status"],
-  Company:    ["About", "Blog", "Privacy", "Terms"],
+  Product: [
+    { label: "Features",     href: "/features" },
+    { label: "Pricing",      href: "/pricing" },
+    { label: "Roadmap",      href: "/roadmap" },
+    { label: "Integrations", href: "/integrations" },
+  ],
+  Developers: [
+    { label: "Documentation",  href: "/docs" },
+    { label: "API Reference",  href: "/docs/api" },
+    { label: "GitHub Action",  href: "/docs/github-action" },
+    { label: "Status",         href: "#" },
+  ],
+  Company: [
+    { label: "About",   href: "#" },
+    { label: "Blog",    href: "#" },
+    { label: "Privacy", href: "/privacy" },
+    { label: "Terms",   href: "/terms" },
+  ],
 };
 
-const footerHrefs: Record<string, string> = {
-  Features:       "/features",
-  Pricing:        "/pricing",
-  Changelog:      "#",
-  Roadmap:        "/roadmap",
-  "API Docs":     "/docs/api",
-  "GitHub Action":"/docs/github-action",
-  Integrations:   "/integrations",
-  Status:         "#",
-  About:          "#",
-  Blog:           "#",
-  Privacy:        "/privacy",
-  Terms:          "/terms",
-};
+const FooterLogo = () => (
+  <svg width="32" height="32" viewBox="0 0 44 44" fill="none">
+    <rect width="44" height="44" rx="12" fill="#C8F135" />
+    <rect x="10" y="13" width="16" height="2.5" rx="1.25" fill="#0A0A0F" />
+    <rect x="10" y="19" width="24" height="2.5" rx="1.25" fill="#0A0A0F" />
+    <rect x="10" y="25" width="20" height="2.5" rx="1.25" fill="#0A0A0F" />
+    <circle cx="33" cy="13" r="4" fill="#0A0A0F" />
+    <path d="M31 13L32.5 14.5L35.5 11.5" stroke="#C8F135" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 export function PageLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -35,29 +45,29 @@ export function PageLayout({ children }: { children: React.ReactNode }) {
           <div className="flex flex-col md:flex-row gap-12 mb-12">
             <div className="md:w-64 flex-shrink-0">
               <Link href="/" className="flex items-center gap-3 mb-4">
-                <svg width="32" height="32" viewBox="0 0 44 44" fill="none">
-                  <rect width="44" height="44" rx="12" fill="#C8F135" />
-                  <rect x="10" y="13" width="16" height="2.5" rx="1.25" fill="#0A0A0F" />
-                  <rect x="10" y="19" width="24" height="2.5" rx="1.25" fill="#0A0A0F" />
-                  <rect x="10" y="25" width="20" height="2.5" rx="1.25" fill="#0A0A0F" />
-                  <circle cx="33" cy="13" r="4" fill="#0A0A0F" />
-                  <path d="M31 13L32.5 14.5L35.5 11.5" stroke="#C8F135" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <FooterLogo />
                 <span className="font-display font-bold text-xl">Doc<span className="text-lime">AI</span></span>
               </Link>
-              <p className="text-ink-500 text-sm font-mono leading-relaxed">
+              <p className="text-ink-500 text-sm font-mono leading-relaxed mb-5">
                 AI-powered documentation for developers who ship fast.
               </p>
+              <div className="flex gap-2">
+                {[{ l: "GH", h: "#" }, { l: "TW", h: "#" }].map(s => (
+                  <a key={s.l} href={s.h} className="w-9 h-9 bg-ink-800 border border-ink-700 rounded-lg flex items-center justify-center text-xs font-mono text-ink-400 hover:text-lime hover:border-lime/30 transition-all">
+                    {s.l}
+                  </a>
+                ))}
+              </div>
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-10">
               {Object.entries(footerLinks).map(([group, links]) => (
                 <div key={group}>
                   <p className="font-display font-bold text-sm mb-4 text-ink-200">{group}</p>
                   <div className="space-y-2.5">
-                    {links.map((l) => (
-                      <p key={l}>
-                        <Link href={footerHrefs[l] ?? "#"} className="text-sm font-mono text-ink-500 hover:text-lime transition-colors">
-                          {l}
+                    {links.map(l => (
+                      <p key={l.label}>
+                        <Link href={l.href} className="text-sm font-mono text-ink-500 hover:text-lime transition-colors">
+                          {l.label}
                         </Link>
                       </p>
                     ))}
@@ -68,7 +78,7 @@ export function PageLayout({ children }: { children: React.ReactNode }) {
           </div>
           <div className="border-t border-ink-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-xs font-mono text-ink-600">© {new Date().getFullYear()} DocAI by Beveez Tech. All rights reserved.</p>
-            <div className="flex items-center gap-4 text-xs font-mono text-ink-600">
+            <div className="flex items-center gap-4 text-xs font-mono text-ink-600 flex-wrap justify-center">
               <span>Built with Claude AI + Next.js</span>
               <span>·</span>
               <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 bg-lime rounded-full" />All systems operational</span>
@@ -80,12 +90,8 @@ export function PageLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Reusable page hero used on all inner pages
 export function PageHero({ badge, title, highlight, subtitle }: {
-  badge: string;
-  title: string;
-  highlight: string;
-  subtitle: string;
+  badge: string; title: string; highlight: string; subtitle: string;
 }) {
   return (
     <div className="relative py-24 px-6 text-center border-b border-ink-800">

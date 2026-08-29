@@ -1,4 +1,3 @@
-// components/PricingTable.tsx
 "use client";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -8,42 +7,42 @@ const plans = [
   {
     key: "FREE",
     name: "Free",
-    price: 0,
-    priceLabel: "₹0",
+    price: "$0",
     period: "forever",
-    desc: "Perfect for trying out DocAI",
+    desc: "Try DocAI with no commitment",
     features: [
       "5 docs per month",
       "README generation",
       "3 languages supported",
-      "Download as Markdown",
+      "Markdown download",
     ],
-    cta: "Get Started",
+    cta: "Get started",
     highlighted: false,
+    color: "",
   },
   {
     key: "SOLO",
     name: "Solo",
-    price: 999,
-    priceLabel: "₹999",
+    price: "$12",
     period: "per month",
     desc: "For individual developers",
     features: [
       "50 docs per month",
-      "All doc types",
+      "All 4 doc types",
       "20+ languages",
-      "API Reference generator",
+      "API reference generator",
       "Inline comments",
       "Email support",
+      "7-day free trial",
     ],
-    cta: "Start Solo",
+    cta: "Start free trial",
     highlighted: true,
+    color: "border-violet",
   },
   {
     key: "TEAM",
     name: "Team",
-    price: 3999,
-    priceLabel: "₹3,999",
+    price: "$48",
     period: "per month",
     desc: "For dev teams who ship fast",
     features: [
@@ -52,18 +51,18 @@ const plans = [
       "GitHub Action included",
       "Auto-docs on every PR",
       "Team dashboard",
-      "API access",
+      "REST API + API keys",
       "Priority support",
+      "7-day free trial",
     ],
-    cta: "Start Team",
+    cta: "Start free trial",
     highlighted: false,
+    color: "",
   },
 ];
 
 declare global {
-  interface Window {
-    Razorpay: any;
-  }
+  interface Window { Razorpay: any; }
 }
 
 export function PricingTable() {
@@ -72,18 +71,11 @@ export function PricingTable() {
   const [loading, setLoading] = useState<string | null>(null);
 
   async function handleSubscribe(planKey: string) {
-    if (!session) {
-      signIn("github");
-      return;
-    }
-    if (planKey === "FREE") {
-      router.push("/dashboard");
-      return;
-    }
+    if (!session) { signIn("github"); return; }
+    if (planKey === "FREE") { router.push("/dashboard"); return; }
 
     setLoading(planKey);
     try {
-      // Create subscription via our API
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -91,7 +83,6 @@ export function PricingTable() {
       });
       const { subscriptionId, keyId } = await res.json();
 
-      // Load Razorpay checkout
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       document.body.appendChild(script);
@@ -100,10 +91,10 @@ export function PricingTable() {
           key: keyId,
           subscription_id: subscriptionId,
           name: "DocAI",
-          description: `${planKey} Plan Subscription`,
+          description: `${planKey} Plan — Monthly`,
+          currency: "USD",
           theme: { color: "#C8F135" },
           handler: async (response: any) => {
-            // Verify on server
             await fetch("/api/subscribe/verify", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -122,50 +113,63 @@ export function PricingTable() {
   }
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
-      {plans.map((plan) => (
+    <div className="grid md:grid-cols-3 gap-5">
+      {plans.map(plan => (
         <div
           key={plan.key}
-          className={`relative rounded-2xl p-6 border transition-all ${
+          className={`relative rounded-2xl p-7 border transition-all flex flex-col ${
             plan.highlighted
-              ? "bg-violet/10 border-violet lime-glow scale-105"
-              : "bg-ink-800 border-ink-600 hover:border-ink-400"
+              ? "bg-violet/8 border-violet violet-glow scale-[1.02]"
+              : "bg-ink-800 border-ink-700 hover:border-ink-500"
           }`}
         >
           {plan.highlighted && (
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-lime text-ink-900 text-xs font-bold px-3 py-1 rounded-full font-mono">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-lime text-ink-900 text-xs font-bold font-mono px-4 py-1 rounded-full whitespace-nowrap">
               MOST POPULAR
             </div>
           )}
 
+          {/* Plan header */}
           <div className="mb-6">
-            <h3 className="font-display font-bold text-xl mb-1">{plan.name}</h3>
-            <p className="text-ink-400 text-sm mb-4">{plan.desc}</p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-4xl font-display font-bold">{plan.priceLabel}</span>
-              <span className="text-ink-400 text-sm">/{plan.period}</span>
+            <p className="font-display font-bold text-base mb-1">{plan.name}</p>
+            <p className="text-xs font-mono text-ink-500 mb-5">{plan.desc}</p>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-4xl font-display font-bold">{plan.price}</span>
+              <span className="text-ink-500 text-sm font-mono">/{plan.period}</span>
             </div>
+            {plan.key !== "FREE" && (
+              <p className="text-xs font-mono text-lime mt-2">7-day free trial · cancel anytime</p>
+            )}
           </div>
 
-          <ul className="space-y-3 mb-8">
-            {plan.features.map((f) => (
-              <li key={f} className="flex items-center gap-2 text-sm text-ink-100">
-                <span className="text-lime text-xs">✓</span>
-                {f}
+          {/* Features */}
+          <ul className="space-y-2.5 mb-8 flex-1">
+            {plan.features.map(f => (
+              <li key={f} className="flex items-center gap-2.5 text-sm font-mono text-ink-300">
+                <span className="text-lime text-xs flex-shrink-0">✓</span>{f}
               </li>
             ))}
           </ul>
 
+          {/* CTA */}
           <button
             onClick={() => handleSubscribe(plan.key)}
             disabled={loading === plan.key}
-            className={`w-full py-3 rounded-lg font-bold text-sm transition-all ${
+            className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
               plan.highlighted
                 ? "bg-lime text-ink-900 hover:bg-lime-dim"
-                : "bg-ink-700 text-ink-100 border border-ink-600 hover:border-lime/40 hover:text-lime"
-            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                : plan.key === "FREE"
+                  ? "bg-ink-700 text-ink-100 border border-ink-600 hover:bg-ink-600"
+                  : "border border-ink-500 text-ink-100 hover:border-lime/40 hover:text-lime"
+            }`}
           >
-            {loading === plan.key ? "Loading..." : plan.cta}
+            {loading === plan.key
+              ? <span className="flex items-center justify-center gap-2">
+                  <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  Loading…
+                </span>
+              : plan.cta
+            }
           </button>
         </div>
       ))}
