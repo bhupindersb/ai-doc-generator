@@ -7,50 +7,30 @@ export const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET!,
 });
 
-// Plan config — IDs come from your Razorpay Dashboard
+// USD pricing — Razorpay supports USD for international payments
 export const PLANS = {
   SOLO: {
     id: process.env.RAZORPAY_PLAN_SOLO!,
     name: "Solo",
-    price: 999,       // ₹999/month
+    priceUSD: 12,
+    currency: "USD",
     docsPerMonth: 50,
-    features: [
-      "50 docs/month",
-      "All languages supported",
-      "README + API + Inline docs",
-      "Download as Markdown",
-      "Email support",
-    ],
   },
   TEAM: {
     id: process.env.RAZORPAY_PLAN_TEAM!,
     name: "Team",
-    price: 3999,      // ₹3,999/month
-    docsPerMonth: -1, // unlimited
-    features: [
-      "Unlimited docs",
-      "GitHub Action integration",
-      "Auto-docs on every PR",
-      "Team dashboard",
-      "Priority support",
-      "API access",
-    ],
+    priceUSD: 48,
+    currency: "USD",
+    docsPerMonth: -1,
   },
 } as const;
 
-export async function createRazorpayCustomer(
-  name: string,
-  email: string
-): Promise<string> {
+export async function createRazorpayCustomer(name: string, email: string): Promise<string> {
   const customer = await razorpay.customers.create({ name, email });
   return customer.id;
 }
 
-export async function createSubscription(
-  planId: string,
-  customerId: string,
-  totalCount = 12
-) {
+export async function createSubscription(planId: string, customerId: string, totalCount = 12) {
   return await razorpay.subscriptions.create({
     plan_id: planId,
     customer_notify: 1,
@@ -63,33 +43,19 @@ export async function cancelSubscription(subscriptionId: string) {
   return await razorpay.subscriptions.cancel(subscriptionId);
 }
 
-export function verifyWebhookSignature(
-  rawBody: string,
-  signature: string
-): boolean {
+export function verifyWebhookSignature(rawBody: string, signature: string): boolean {
   const expectedSig = crypto
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
     .update(rawBody)
     .digest("hex");
-  return crypto.timingSafeEqual(
-    Buffer.from(expectedSig),
-    Buffer.from(signature)
-  );
+  return crypto.timingSafeEqual(Buffer.from(expectedSig), Buffer.from(signature));
 }
 
-// Verify payment on checkout completion
-export function verifyPaymentSignature(
-  orderId: string,
-  paymentId: string,
-  signature: string
-): boolean {
-  const body = orderId + "|" + paymentId;
+export function verifyPaymentSignature(subscriptionId: string, paymentId: string, signature: string): boolean {
+  const body = subscriptionId + "|" + paymentId;
   const expectedSig = crypto
     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
     .update(body)
     .digest("hex");
-  return crypto.timingSafeEqual(
-    Buffer.from(expectedSig),
-    Buffer.from(signature)
-  );
+  return crypto.timingSafeEqual(Buffer.from(expectedSig), Buffer.from(signature));
 }

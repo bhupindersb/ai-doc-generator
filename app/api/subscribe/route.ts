@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   try {
     // Get or create Razorpay customer
-    let user = await db.user.findUnique({ where: { id: session.user.id } });
+    const user = await db.user.findUnique({ where: { id: session.user.id } });
     let customerId = user?.razorpayCustomerId;
 
     if (!customerId) {
@@ -41,9 +41,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       subscriptionId: subscription.id,
       keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      plan,
+      currency: "USD",
     });
   } catch (err: any) {
     console.error("Subscribe error:", err);
-    return NextResponse.json({ error: "Failed to create subscription" }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message ?? "Failed to create subscription" },
+      { status: 500 }
+    );
   }
 }
