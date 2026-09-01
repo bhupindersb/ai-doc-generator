@@ -20,8 +20,9 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  // Remove custom signIn page — use NextAuth default which works reliably
-  // pages: { signIn: "/auth/signin" },
+  pages: {
+    error: "/auth/error", // Our custom error page — never 404s
+  },
 };
 
 // Extend NextAuth types
