@@ -19,6 +19,14 @@ export async function POST(req: NextRequest) {
 
   const planConfig = PLANS[plan as keyof typeof PLANS];
 
+  // Safety check — make sure plan ID env var is set
+  if (!planConfig.id) {
+    return NextResponse.json(
+      { error: `Plan ID not configured for ${plan}. Check RAZORPAY_PLAN_SOLO / RAZORPAY_PLAN_TEAM env vars.` },
+      { status: 500 }
+    );
+  }
+
   try {
     // Get or create Razorpay customer
     const user = await db.user.findUnique({ where: { id: session.user.id } });
@@ -45,9 +53,17 @@ export async function POST(req: NextRequest) {
       currency: "USD",
     });
   } catch (err: any) {
-    console.error("Subscribe error:", err);
+    // Extract the exact Razorpay error
+    const razorpayError =
+      err?.error?.description ??
+      err?.error?.field ??
+      err?.message ??
+      "Failed to create subscription";
+
+    console.error("Subscribe error full:", JSON.stringify(err, null, 2));
+
     return NextResponse.json(
-      { error: err.message ?? "Failed to create subscription" },
+      { error: razorpayError },
       { status: 500 }
     );
   }
