@@ -81,6 +81,13 @@ export async function POST(request: NextRequest) {
       if (existing && existing.userId !== ownerId) {
         throw new Error("Subscription owner does not match the stored subscription.");
       }
+      const currentUserSubscription = await tx.subscription.findUnique({ where: { userId: ownerId } });
+      if (currentUserSubscription && currentUserSubscription.razorpaySubId !== subscriptionId) {
+        // This is a delayed event for an older subscription that has already
+        // been replaced. Record the event for idempotency but do not overwrite
+        // the user's current subscription.
+        return;
+      }
       const resolvedPlan = plan ?? existing?.plan;
       if (!resolvedPlan || resolvedPlan === "FREE" || resolvedPlan === "ENTERPRISE") {
         throw new Error("Subscription event has no supported plan mapping.");
