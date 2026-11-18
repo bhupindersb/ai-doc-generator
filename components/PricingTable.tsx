@@ -13,7 +13,7 @@ const plans = [
     features: [
       "5 docs per month",
       "README generation",
-      "3 languages supported",
+      "22 languages supported",
       "Markdown download",
     ],
     cta: "Get started free",
@@ -28,7 +28,7 @@ const plans = [
     features: [
       "50 docs per month",
       "All 4 doc types",
-      "20+ languages",
+      "22 languages",
       "API reference generator",
       "Inline comments",
       "Email support",
@@ -45,11 +45,10 @@ const plans = [
     features: [
       "Unlimited docs",
       "Everything in Solo",
-      "GitHub Action included",
-      "Auto-docs on every PR",
-      "Team dashboard",
-      "REST API + API keys",
-      "Priority support",
+      "High-volume generation allowance",
+      "All documentation formats",
+      "22 supported languages",
+      "Saved document history",
     ],
     cta: "Get Team",
     highlighted: false,
@@ -164,7 +163,7 @@ export function PricingTable() {
                 <span className="text-ink-500 text-sm font-mono">/{plan.period}</span>
               </div>
               {plan.key !== "FREE" && (
-                <p className="text-xs font-mono text-ink-400 mt-2">cancel anytime</p>
+                <p className="text-xs font-mono text-ink-400 mt-2">monthly subscription</p>
               )}
             </div>
 
