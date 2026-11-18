@@ -16,7 +16,7 @@ const PLAN_BADGE: Record<string, string> = {
   ENTERPRISE: "text-lime bg-lime/10 border-lime/30",
 };
 
-const LANGUAGES = ["typescript","javascript","python","php","go","rust","java","c++","c#","ruby","swift","kotlin","bash","sql","html","css","r","scala"];
+const LANGUAGES = ["typescript","javascript","python","php","go","rust","java","c++","c#","ruby","swift","kotlin","bash","sql","html","css","r","scala","dart","elixir","lua","perl"];
 const DOC_TYPES: { key: DocType; label: string; desc: string }[] = [
   { key: "full",   label: "Full Docs",  desc: "README + API + Inline" },
   { key: "readme", label: "README",     desc: "Project overview & setup" },
@@ -27,7 +27,6 @@ const NAV: { key: Tab; label: string; icon: string }[] = [
   { key: "generate", label: "Generate",  icon: "✦" },
   { key: "history",  label: "History",   icon: "◷" },
   { key: "settings", label: "Settings",  icon: "⚙" },
-  { key: "apikeys",  label: "API Keys",  icon: "⌘" },
 ];
 
 // ── Logo ───────────────────────────────────────────────────────────
@@ -43,9 +42,10 @@ const Logo = () => (
 );
 
 // ── Main component ─────────────────────────────────────────────────
-export function DashboardClient({ user, plan, docsThisMonth, recentDocs }: {
+export function DashboardClient({ user, plan, subscriptionPending, docsThisMonth, recentDocs }: {
   user: { name: string; email: string; image: string | null };
   plan: string;
+  subscriptionPending: boolean;
   docsThisMonth: number;
   recentDocs: Doc[];
 }) {
@@ -151,11 +151,11 @@ export function DashboardClient({ user, plan, docsThisMonth, recentDocs }: {
             Upgrade plan
           </Link>
           <Link
-            href="/docs/api"
+            href="/integrations"
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-500 hover:bg-ink-800 hover:text-lime transition-all"
           >
-            <span className="w-4 text-center">?</span>
-            API Docs
+            <span className="w-4 text-center">↗</span>
+            Integrations
           </Link>
         </div>
       </nav>
@@ -223,6 +223,12 @@ export function DashboardClient({ user, plan, docsThisMonth, recentDocs }: {
             <span className={`text-xs font-mono px-2 py-0.5 rounded-full border ${PLAN_BADGE[plan] ?? PLAN_BADGE.FREE}`}>{plan}</span>
           </div>
         </div>
+
+        {subscriptionPending && (
+          <div className="mx-4 mt-4 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-300">
+            Payment details were received. Razorpay is confirming your subscription; paid features will appear here once activation is confirmed.
+          </div>
+        )}
 
         {/* ── GENERATE TAB ── */}
         {tab === "generate" && (
@@ -374,7 +380,7 @@ export function DashboardClient({ user, plan, docsThisMonth, recentDocs }: {
                         <div className="absolute inset-0 border-2 border-lime/20 rounded-full" />
                         <div className="absolute inset-0 border-2 border-lime border-t-transparent rounded-full animate-spin" />
                       </div>
-                      <p className="text-xs font-mono text-ink-500 animate-pulse2">Claude is reading your code…</p>
+                      <p className="text-xs font-mono text-ink-500 animate-pulse2">AI is analysing your code…</p>
                     </div>
                   )}
                   {!generating && !output && (

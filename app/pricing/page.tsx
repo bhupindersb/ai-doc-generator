@@ -5,12 +5,12 @@ import Link from "next/link";
 const faqs = [
   { q: "Do I need a credit card for the free plan?", a: "No. The free plan gives you 5 docs per month with zero payment info required. Just sign in with GitHub and start generating." },
   { q: "What counts as one 'doc'?", a: "Each time you click Generate, that counts as one doc — regardless of which type you pick (README, API, Inline, or Full). Full Docs generates all three in a single request and counts as one." },
-  { q: "Can I cancel anytime?", a: "Yes, absolutely. Cancel from your dashboard settings and your plan stays active until the end of the billing period. No questions asked." },
-  { q: "Is there a free trial on paid plans?", a: "Yes — all paid plans include a 7-day free trial. You won't be charged until the trial ends." },
-  { q: "What payment methods do you accept?", a: "We use Razorpay for payments. You can pay via UPI, Net Banking, Debit/Credit cards (Visa, Mastercard, RuPay), and wallets." },
-  { q: "Do you offer refunds?", a: "If you're unhappy in the first 7 days, email us at hello@beveez.tech and we'll refund you completely — no questions." },
-  { q: "What's the difference between Solo and Team?", a: "Solo is for individual developers — 50 docs/month, all doc types, all languages. Team adds unlimited docs, the GitHub Action integration, a team dashboard, API access, and priority support." },
-  { q: "Can I use DocAI in my CI/CD pipeline?", a: "Yes — API access is available on the Team plan. You get an API key and can call the generation endpoint from any script, GitHub Action, or pipeline." },
+  { q: "Can I cancel anytime?", a: "Yes, absolutely. Contact support to request cancellation. Subscription status is confirmed through Razorpay." },
+  { q: "Is there a free trial on paid plans?", a: "No. Paid subscriptions begin when you complete the Razorpay authorisation checkout." },
+  { q: "What payment methods do you accept?", a: "Payments are processed through Razorpay. Available payment methods depend on your location and the merchant account approvals." },
+  { q: "Do you offer refunds?", a: "For billing questions or refund requests, contact hello@beveez.tech. Requests are reviewed under the applicable payment and refund terms." },
+  { q: "What's the difference between Solo and Team?", a: "Solo includes 50 documents per month. Team is intended for higher-volume documentation use, with the same generation formats and language support." },
+  { q: "Can I use DocAI in my CI/CD pipeline?", a: "Public API access and customer-managed API keys are not yet generally available. They are planned for a future release." },
 ];
 
 export default function PricingPage() {
@@ -28,7 +28,7 @@ export default function PricingPage() {
         <div className="max-w-5xl mx-auto">
           <PricingTable />
           <p className="text-center text-xs font-mono text-ink-600 mt-8">
-            All paid plans include a 7-day free trial · Payments via Razorpay · INR pricing
+            Paid subscriptions · Payments via Razorpay · Prices shown in USD
           </p>
         </div>
       </section>
@@ -49,18 +49,16 @@ export default function PricingPage() {
               </thead>
               <tbody className="divide-y divide-ink-700">
                 {[
-                  ["Docs per month",          "5",       "50",        "Unlimited"],
+                  ["Docs per month",          "5",       "50",        "999,999"],
                   ["README generation",       "✓",       "✓",         "✓"],
                   ["API reference",           "✓",       "✓",         "✓"],
                   ["Inline comments",         "✓",       "✓",         "✓"],
                   ["Full docs (all 3)",       "✓",       "✓",         "✓"],
-                  ["Languages supported",     "3",       "20+",       "20+"],
+                  ["Languages supported",     "22",      "22",        "22"],
                   ["Markdown download",       "✓",       "✓",         "✓"],
-                  ["GitHub Action",           "—",       "—",         "✓"],
-                  ["REST API access",         "—",       "—",         "✓"],
-                  ["Team dashboard",          "—",       "—",         "✓"],
+                  ["High-volume usage tier",  "—",       "—",         "✓"],
                   ["Priority support",        "—",       "Email",     "Priority"],
-                  ["7-day free trial",        "—",       "✓",         "✓"],
+                  ["Free trial",              "—",       "—",         "—"],
                 ].map(([feat, ...vals]) => (
                   <tr key={feat} className="hover:bg-ink-700/30 transition-colors">
                     <td className="px-6 py-3.5 font-mono text-ink-300 text-xs">{feat}</td>
