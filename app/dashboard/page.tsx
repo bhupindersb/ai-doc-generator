@@ -18,6 +18,7 @@ export default async function DashboardPage() {
         select: {
           usageLogs: {
             where: {
+              type: "doc_generation",
               createdAt: {
                 gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
               },
