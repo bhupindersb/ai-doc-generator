@@ -10,7 +10,7 @@ export const maxDuration = 90;
 const LANGUAGES = new Set([
   "typescript", "javascript", "python", "php", "go", "rust", "java",
   "c++", "c#", "ruby", "swift", "kotlin", "bash", "sql", "html",
-  "css", "r", "scala",
+  "css", "r", "scala", "dart", "elixir", "lua", "perl",
 ]);
 const DOC_TYPES = new Set<DocType>(["full", "readme", "api", "inline"]);
 const MAX_CODE_LENGTH = 100_000;
