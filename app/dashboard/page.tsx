@@ -30,7 +30,7 @@ export default async function DashboardPage({ searchParams }: { searchParams?: {
   });
 
   const subscriptionStatus = user?.subscription?.status ?? "PENDING";
-  const plan = subscriptionStatus === "ACTIVE" ? user.subscription!.plan : "FREE";
+  const plan = subscriptionStatus === "ACTIVE" ? (user?.subscription?.plan ?? "FREE") : "FREE";
   const docsThisMonth = user?._count.usageLogs ?? 0;
 
   return (
