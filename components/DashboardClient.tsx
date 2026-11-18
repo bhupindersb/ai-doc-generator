@@ -42,9 +42,10 @@ const Logo = () => (
 );
 
 // ── Main component ─────────────────────────────────────────────────
-export function DashboardClient({ user, plan, docsThisMonth, recentDocs }: {
+export function DashboardClient({ user, plan, subscriptionPending, docsThisMonth, recentDocs }: {
   user: { name: string; email: string; image: string | null };
   plan: string;
+  subscriptionPending: boolean;
   docsThisMonth: number;
   recentDocs: Doc[];
 }) {
@@ -222,6 +223,12 @@ export function DashboardClient({ user, plan, docsThisMonth, recentDocs }: {
             <span className={`text-xs font-mono px-2 py-0.5 rounded-full border ${PLAN_BADGE[plan] ?? PLAN_BADGE.FREE}`}>{plan}</span>
           </div>
         </div>
+
+        {subscriptionPending && (
+          <div className="mx-4 mt-4 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-300">
+            Payment details were received. Razorpay is confirming your subscription; paid features will appear here once activation is confirmed.
+          </div>
+        )}
 
         {/* ── GENERATE TAB ── */}
         {tab === "generate" && (
