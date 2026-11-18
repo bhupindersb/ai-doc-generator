@@ -29,6 +29,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Request body must be valid JSON." }, { status: 400 });
   }
 
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return NextResponse.json({ error: "Request body must be a JSON object." }, { status: 400 });
+  }
   const input = body as { code?: unknown; language?: unknown; docType?: unknown };
   const code = typeof input.code === "string" ? input.code : "";
   const language = typeof input.language === "string" ? input.language.toLowerCase() : "";
