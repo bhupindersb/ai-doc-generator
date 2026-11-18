@@ -21,21 +21,21 @@ const features = [
     color: "#C8F135",
   },
   {
-    icon: "⚙️", title: "GitHub Action",
-    desc: "Add a single YAML file to your repo and DocAI will auto-generate documentation for every changed file on every pull request — committing the docs back as a separate commit.",
-    bullets: ["Setup takes under 5 minutes", "Works on any GitHub repository", "PRs get a comment with the docs preview link"],
+    icon: "⚙️", title: "GitHub Action (planned)",
+    desc: "Automated pull-request documentation is on the roadmap. The current release focuses on generating, reviewing, saving and downloading documentation from the authenticated dashboard.",
+    bullets: ["Manual generation is available now", "Generated documents are saved to your account", "GitHub Actions automation will follow after secure customer API keys are implemented"],
     color: "#a78bfa",
   },
   {
     icon: "🌐", title: "20+ Languages",
-    desc: "Full support for every major language — with language-specific conventions, comment formats, and type annotation styles respected in every generated doc.",
-    bullets: ["TypeScript, JavaScript, Python, PHP, Go, Rust, Java", "C++, C#, Ruby, Swift, Kotlin, Bash, SQL, HTML, CSS", "R, Scala, Elixir support in beta"],
+    desc: "Generate documentation for 22 languages, with prompts tailored to the selected language and output format.",
+    bullets: ["TypeScript, JavaScript, Python, PHP, Go, Rust, Java", "C++, C#, Ruby, Swift, Kotlin, Bash, SQL, HTML, CSS", "R, Scala, Dart, Elixir, Lua and Perl"],
     color: "#C8F135",
   },
   {
     icon: "⬇️", title: "Flexible Export",
-    desc: "Copy to clipboard, download as .md, or use the API to push docs directly to your repo, Confluence, Notion, or any other documentation platform.",
-    bullets: ["One-click Markdown download", "REST API for CI/CD pipeline integration", "Notion and Confluence export coming Q3 2026"],
+    desc: "Copy generated documentation or download it as a Markdown file. Direct publishing integrations are planned for future releases.",
+    bullets: ["One-click Markdown download", "Saved document history in your account", "Notion and Confluence publishing are planned"],
     color: "#a78bfa",
   },
 ];
