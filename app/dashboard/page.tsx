@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { DashboardClient } from "@/components/DashboardClient";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams?: { subscribed?: string } }) {
   const session = await getServerSession(authOptions);
   if (!session) redirect("/");
 
@@ -29,7 +29,8 @@ export default async function DashboardPage() {
     },
   });
 
-  const plan = user?.subscription?.plan ?? "FREE";
+  const subscriptionStatus = user?.subscription?.status ?? "PENDING";
+  const plan = subscriptionStatus === "ACTIVE" ? user.subscription!.plan : "FREE";
   const docsThisMonth = user?._count.usageLogs ?? 0;
 
   return (
@@ -40,6 +41,7 @@ export default async function DashboardPage() {
         image: session.user.image ?? null,
       }}
       plan={plan}
+      subscriptionPending={searchParams?.subscribed === "true" && subscriptionStatus !== "ACTIVE"}
       docsThisMonth={docsThisMonth}
       recentDocs={user?.documents ?? []}
     />
