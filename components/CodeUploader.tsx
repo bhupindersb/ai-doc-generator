@@ -5,7 +5,7 @@ import { useState } from "react";
 const LANGUAGES = [
   "typescript", "javascript", "python", "go", "rust",
   "java", "c++", "c#", "php", "ruby", "swift", "kotlin",
-  "bash", "sql", "html", "css",
+  "bash", "sql", "html", "css", "r", "scala", "dart", "elixir", "lua", "perl",
 ];
 
 const DOC_TYPES = [
