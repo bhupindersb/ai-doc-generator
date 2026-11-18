@@ -5,7 +5,7 @@ const integrations = [
   {
     category: "Version Control",
     items: [
-      { name: "GitHub", icon: "GH", status: "live", desc: "Sign in with GitHub, auto-generate docs on PRs via GitHub Action, push docs to any branch.", plan: "All plans" },
+      { name: "GitHub", icon: "GH", status: "live", desc: "Sign in to Docs AI with your GitHub account. Pull-request documentation automation is planned, not yet available.", plan: "Sign-in available" },
       { name: "GitLab", icon: "GL", status: "planned", desc: "GitLab OAuth and CI/CD pipeline integration coming Q4 2026.", plan: "Coming Q4" },
       { name: "Bitbucket", icon: "BB", status: "planned", desc: "Bitbucket Pipelines integration on the roadmap for 2027.", plan: "2027" },
     ],
@@ -30,8 +30,8 @@ const integrations = [
   {
     category: "CI/CD & DevOps",
     items: [
-      { name: "GitHub Actions", icon: "GA", status: "live", desc: "Plug-and-play YAML workflow that generates docs on every PR. Full guide available.", plan: "Team plan" },
-      { name: "REST API", icon: "API", status: "live", desc: "Call the DocAI API from any CI pipeline, script, or automation tool. Full API docs available.", plan: "Team plan" },
+      { name: "GitHub Actions", icon: "GA", status: "planned", desc: "Automated pull-request documentation will be developed after secure customer API key management is available.", plan: "Planned" },
+      { name: "REST API", icon: "API", status: "planned", desc: "A public API with customer-managed API keys is planned. The current generation endpoint is available only to signed-in dashboard users.", plan: "Planned" },
       { name: "GitLab CI", icon: "CI", status: "planned", desc: "Native GitLab CI job definition for auto-documentation.", plan: "Coming Q4" },
     ],
   },
