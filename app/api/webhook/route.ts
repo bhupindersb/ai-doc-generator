@@ -78,6 +78,9 @@ export async function POST(request: NextRequest) {
       }
 
       const existing = await tx.subscription.findUnique({ where: { razorpaySubId: subscriptionId } });
+      if (existing && existing.userId !== ownerId) {
+        throw new Error("Subscription owner does not match the stored subscription.");
+      }
       const resolvedPlan = plan ?? existing?.plan;
       if (!resolvedPlan || resolvedPlan === "FREE" || resolvedPlan === "ENTERPRISE") {
         throw new Error("Subscription event has no supported plan mapping.");
@@ -109,7 +112,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ status: "ok" });
   } catch (error: any) {
     if (error?.code === "P2002") {
-      return NextResponse.json({ status: "duplicate_ignored" });
+      const duplicate = await db.razorpayEvent.findUnique({ where: { eventId } });
+      if (duplicate) return NextResponse.json({ status: "duplicate_ignored" });
     }
     console.error("Razorpay webhook processing failed:", error);
     return NextResponse.json({ error: "Webhook processing failed." }, { status: 500 });
