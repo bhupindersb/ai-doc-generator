@@ -21,6 +21,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return NextResponse.json({ error: "Request body must be a JSON object." }, { status: 400 });
+  }
   const plan = body.plan;
   if (plan !== "SOLO" && plan !== "TEAM") {
     return NextResponse.json({ error: "Please select a valid paid plan." }, { status: 400 });
