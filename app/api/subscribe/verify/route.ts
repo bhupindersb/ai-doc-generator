@@ -20,6 +20,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return NextResponse.json({ error: "Request body must be a JSON object." }, { status: 400 });
+  }
   const paymentId = typeof body.razorpay_payment_id === "string" ? body.razorpay_payment_id : "";
   const subscriptionId = typeof body.razorpay_subscription_id === "string" ? body.razorpay_subscription_id : "";
   const signature = typeof body.razorpay_signature === "string" ? body.razorpay_signature : "";
