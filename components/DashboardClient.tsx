@@ -16,7 +16,7 @@ const PLAN_BADGE: Record<string, string> = {
   ENTERPRISE: "text-lime bg-lime/10 border-lime/30",
 };
 
-const LANGUAGES = ["typescript","javascript","python","php","go","rust","java","c++","c#","ruby","swift","kotlin","bash","sql","html","css","r","scala"];
+const LANGUAGES = ["typescript","javascript","python","php","go","rust","java","c++","c#","ruby","swift","kotlin","bash","sql","html","css","r","scala","dart","elixir","lua","perl"];
 const DOC_TYPES: { key: DocType; label: string; desc: string }[] = [
   { key: "full",   label: "Full Docs",  desc: "README + API + Inline" },
   { key: "readme", label: "README",     desc: "Project overview & setup" },
@@ -374,7 +374,7 @@ export function DashboardClient({ user, plan, docsThisMonth, recentDocs }: {
                         <div className="absolute inset-0 border-2 border-lime/20 rounded-full" />
                         <div className="absolute inset-0 border-2 border-lime border-t-transparent rounded-full animate-spin" />
                       </div>
-                      <p className="text-xs font-mono text-ink-500 animate-pulse2">Claude is reading your code…</p>
+                      <p className="text-xs font-mono text-ink-500 animate-pulse2">AI is analysing your code…</p>
                     </div>
                   )}
                   {!generating && !output && (
