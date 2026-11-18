@@ -5,19 +5,19 @@ const features = [
   {
     icon: "📄", title: "README Generator",
     desc: "Instantly produce a professional README.md from any codebase — including project overview, installation steps, environment variables, usage examples, and badges. Never write a README from scratch again.",
-    bullets: ["Auto-detects project type (library, API, CLI, web app)", "Generates badges (version, license, CI status)", "Includes code examples pulled from your own code"],
+    bullets: ["Summarises the supplied source code", "Adds setup guidance when details can be inferred", "Clearly flags missing project details instead of inventing them"],
     color: "#C8F135",
   },
   {
     icon: "🔍", title: "API Reference",
     desc: "Document every function, class, and method with parameter types, return values, and real usage examples. Output is structured Markdown that you can drop directly into your docs site.",
-    bullets: ["Auto-detects TypeScript types, Python hints, PHPDoc", "Generates working code examples for each function", "Exports as Markdown, HTML, or plain text"],
+    bullets: ["Explains public functions and classes", "Documents parameters and return values visible in the code", "Provides Markdown output for review and editing"],
     color: "#a78bfa",
   },
   {
     icon: "💬", title: "Inline Comments",
     desc: "Returns your code annotated with JSDoc, docstrings, or language-native comment format — with every function, parameter, and complex logic block explained in plain English.",
-    bullets: ["Respects existing comments — adds to, doesn't replace", "Follows JSDoc, PHPDoc, PyDoc, GoDoc conventions", "Works on files up to 2,000 lines"],
+    bullets: ["Adds explanatory comments to supplied source", "Uses language-appropriate documentation conventions", "Review generated code before using it in a project"],
     color: "#C8F135",
   },
   {
