@@ -12,7 +12,7 @@ const plans = [
     desc: "Try DocAI with no commitment",
     features: [
       "5 docs per month",
-      "README generation",
+      "All 4 documentation formats",
       "22 languages supported",
       "Markdown download",
     ],
@@ -43,7 +43,7 @@ const plans = [
     period: "per month",
     desc: "For dev teams who ship fast",
     features: [
-      "Unlimited docs",
+      "Up to 999,999 docs/month",
       "Everything in Solo",
       "High-volume generation allowance",
       "All documentation formats",
