@@ -49,7 +49,7 @@ export default function PricingPage() {
               </thead>
               <tbody className="divide-y divide-ink-700">
                 {[
-                  ["Docs per month",          "5",       "50",        "Unlimited"],
+                  ["Docs per month",          "5",       "50",        "999,999"],
                   ["README generation",       "✓",       "✓",         "✓"],
                   ["API reference",           "✓",       "✓",         "✓"],
                   ["Inline comments",         "✓",       "✓",         "✓"],
