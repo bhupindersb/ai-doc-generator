@@ -21,7 +21,7 @@ cp .env.example .env.local
 Fill in the environment variables before running the app:
 
 - `GROQ_API_KEY` — server-side AI provider key
-- `DATABASE_URL` and `DIRECT_URL` (if configured separately) — PostgreSQL connection
+- `DATABASE_URL` — PostgreSQL connection
 - `NEXTAUTH_SECRET`, `NEXTAUTH_URL`
 - `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`
 - `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`
