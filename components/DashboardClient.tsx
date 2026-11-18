@@ -27,7 +27,6 @@ const NAV: { key: Tab; label: string; icon: string }[] = [
   { key: "generate", label: "Generate",  icon: "✦" },
   { key: "history",  label: "History",   icon: "◷" },
   { key: "settings", label: "Settings",  icon: "⚙" },
-  { key: "apikeys",  label: "API Keys",  icon: "⌘" },
 ];
 
 // ── Logo ───────────────────────────────────────────────────────────
@@ -151,11 +150,11 @@ export function DashboardClient({ user, plan, docsThisMonth, recentDocs }: {
             Upgrade plan
           </Link>
           <Link
-            href="/docs/api"
+            href="/integrations"
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-ink-500 hover:bg-ink-800 hover:text-lime transition-all"
           >
-            <span className="w-4 text-center">?</span>
-            API Docs
+            <span className="w-4 text-center">↗</span>
+            Integrations
           </Link>
         </div>
       </nav>
