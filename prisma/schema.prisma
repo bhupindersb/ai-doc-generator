@@ -1,6 +1,6 @@
 // prisma/schema.prisma
-// Run: npx prisma db push  (to sync with Supabase)
-// Run: npx prisma studio   (to browse data)
+// Run: npx prisma migrate dev --name add_payment_events
+// Production: review and deploy the generated migration before applying it.
 
 generator client {
   provider = "prisma-client-js"
@@ -13,65 +13,66 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String?
-  email         String         @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-
-  // Razorpay
+  id                 String         @id @default(cuid())
+  name               String?
+  email              String         @unique
+  emailVerified      DateTime?
+  image              String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
   razorpayCustomerId String?
-
-  // Relations
-  accounts      Account[]
-  sessions      Session[]
-  subscription  Subscription?
-  usageLogs     UsageLog[]
-  documents     Document[]
+  accounts           Account[]
+  sessions           Session[]
+  subscription       Subscription?
+  usageLogs          UsageLog[]
+  documents          Document[]
 }
 
 model Subscription {
-  id                   String    @id @default(cuid())
-  userId               String    @unique
-  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Razorpay
-  razorpaySubId        String    @unique
-  razorpayPlanId       String
-  plan                 Plan      @default(FREE)
-  status               SubStatus @default(ACTIVE)
-
-  currentPeriodStart   DateTime
-  currentPeriodEnd     DateTime
-  cancelAtPeriodEnd    Boolean   @default(false)
-
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
+  id                 String    @id @default(cuid())
+  userId             String    @unique
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  razorpaySubId      String    @unique
+  razorpayPlanId     String
+  plan               Plan      @default(FREE)
+  status             SubStatus @default(PENDING)
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 }
 
 model UsageLog {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   // "doc_generation", "github_action"
+  type      String
   tokens    Int      @default(0)
   createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
 
 model Document {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title        String
-  language     String
-  inputCode    String   @db.Text
-  outputDoc    String   @db.Text
-  createdAt    DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  language  String
+  inputCode String   @db.Text
+  outputDoc String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
 
-// NextAuth required models
+model RazorpayEvent {
+  eventId     String   @id
+  eventType   String
+  processedAt DateTime @default(now())
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -114,6 +115,7 @@ enum Plan {
 }
 
 enum SubStatus {
+  PENDING
   ACTIVE
   PAUSED
   CANCELLED
