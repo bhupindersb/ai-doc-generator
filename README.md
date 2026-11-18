@@ -1,168 +1,100 @@
-# DocAI — AI-Powered Code Documentation SaaS
+# Docs AI
 
-> Generate beautiful READMEs, API references, and inline comments for any codebase — powered by Claude AI.
+Docs AI turns source code into developer documentation, including README drafts, API references, annotated source code and combined documentation.
 
----
+## Current stack
 
-## 🗂 Project Structure
+- Next.js 14 App Router and TypeScript
+- NextAuth.js with GitHub sign-in
+- Prisma and PostgreSQL (the project currently uses Supabase PostgreSQL)
+- Groq API with Llama 3.3 70B for generation
+- Razorpay Subscriptions for paid plans
+- Vercel deployment
 
-```
-ai-doc-generator/
-├── app/                          # Next.js App Router
-│   ├── page.tsx                  # Landing page
-│   ├── layout.tsx                # Root layout + metadata
-│   ├── globals.css               # Design tokens + animations
-│   ├── dashboard/
-│   │   └── page.tsx              # Protected dashboard (server component)
-│   └── api/
-│       ├── generate/route.ts     # POST — generate docs via Claude
-│       ├── subscribe/route.ts    # POST — create Razorpay subscription
-│       ├── subscribe/verify/     # POST — verify payment signature
-│       ├── webhook/route.ts      # POST — Razorpay webhook handler
-│       └── auth/[...nextauth]/   # NextAuth.js handler
-│
-├── components/
-│   ├── Providers.tsx             # NextAuth SessionProvider
-│   ├── Navbar.tsx                # Top nav with auth
-│   ├── PricingTable.tsx          # Plans + Razorpay checkout
-│   ├── DashboardClient.tsx       # Dashboard UI (client)
-│   ├── CodeUploader.tsx          # Code input + language selector
-│   └── DocPreview.tsx            # Generated doc viewer + download
-│
-├── lib/
-│   ├── claude.ts                 # Anthropic SDK wrapper
-│   ├── razorpay.ts               # Razorpay SDK + helpers
-│   ├── db.ts                     # Prisma client singleton
-│   └── auth.ts                   # NextAuth config
-│
-├── prisma/
-│   └── schema.prisma             # DB schema (User, Subscription, etc.)
-│
-├── .github/workflows/
-│   ├── deploy.yml                # CI → Vercel auto-deploy
-│   └── auto-docs.yml             # Team plan: auto-docs on PR
-│
-├── .env.example                  # All required env vars (with comments)
-└── .gitignore
-```
-
----
-
-## 🚀 Quick Start
-
-### 1. Clone & Install
+## Local setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ai-doc-generator.git
-cd ai-doc-generator
 npm install
-```
-
-### 2. Set Up Environment Variables
-
-```bash
 cp .env.example .env.local
-# Fill in all values — see instructions below
 ```
 
-### 3. Set Up Database (Supabase)
+Fill in the environment variables before running the app:
+
+- `GROQ_API_KEY` — server-side AI provider key
+- `DATABASE_URL` and `DIRECT_URL` (if configured separately) — PostgreSQL connection
+- `NEXTAUTH_SECRET`, `NEXTAUTH_URL`
+- `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`
+- `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`
+- `NEXT_PUBLIC_RAZORPAY_KEY_ID` — browser-visible Razorpay key ID only
+- `RAZORPAY_PLAN_SOLO` and `RAZORPAY_PLAN_TEAM` — plan IDs created in the Razorpay dashboard
+
+Generate the Prisma client and sync a development database:
 
 ```bash
-npx prisma db push       # Creates all tables in Supabase
-npx prisma studio        # Optional: browse data in browser
-```
-
-### 4. Run Locally
-
-```bash
+npx prisma generate
+npx prisma db push
 npm run dev
-# Open http://localhost:3000
 ```
 
----
+Do not run `prisma db push` against production without first reviewing the schema diff and taking a database backup. For production, use a reviewed Prisma migration and deploy it before deploying application code that depends on the new schema.
 
-## 🔑 Credentials You Need
+## Razorpay setup
 
-### Anthropic (Claude API)
-1. Go to [console.anthropic.com](https://console.anthropic.com/settings/keys)
-2. Create a new API key
-3. Add to `.env.local` as `ANTHROPIC_API_KEY`
+Create the Solo and Team subscription plans in the Beveez Tech Razorpay account, then add their plan IDs to the environment variables above. Configure the webhook endpoint:
 
-### Razorpay
-1. Login to [dashboard.razorpay.com](https://dashboard.razorpay.com)
-2. **API Keys** → Settings → API Keys → Generate Key Pair
-   - Add `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`
-   - Add `NEXT_PUBLIC_RAZORPAY_KEY_ID` (same as KEY_ID)
-3. **Create Plans** → Subscriptions → Plans → Create Plan
-   - Create "Solo" plan: ₹999/month, monthly interval
-   - Create "Team" plan: ₹3999/month, monthly interval
-   - Add plan IDs as `RAZORPAY_PLAN_SOLO` and `RAZORPAY_PLAN_TEAM`
-4. **Webhook** → Settings → Webhooks → Add New Webhook
-   - URL: `https://your-domain.vercel.app/api/webhook`
-   - Events: `subscription.*`
-   - Copy the secret → `RAZORPAY_WEBHOOK_SECRET`
+```
+https://aidocs.beveeztech.com/api/webhook
+```
 
-### Supabase (Database)
-1. Create project at [supabase.com](https://supabase.com)
-2. Settings → API → copy `URL` and `anon key` and `service_role key`
-3. Settings → Database → copy connection string → `DATABASE_URL`
+Subscribe to the subscription lifecycle events used by the application, including:
 
-### GitHub OAuth (Sign in with GitHub)
-1. [github.com/settings/developers](https://github.com/settings/developers) → New OAuth App
-2. Homepage URL: `http://localhost:3000`
-3. Callback URL: `http://localhost:3000/api/auth/callback/github`
-4. Copy Client ID + Secret → `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- `subscription.activated`
+- `subscription.charged`
+- `subscription.cancelled`
+- `subscription.completed`
+- `subscription.halted`
+- `subscription.paused`
+- `subscription.resumed`
 
-### Vercel (Deployment)
-1. Import GitHub repo at [vercel.com/new](https://vercel.com/new)
-2. Add all `.env.local` variables in Vercel Dashboard → Settings → Environment Variables
-3. For GitHub Actions auto-deploy:
-   - Get token: [vercel.com/account/tokens](https://vercel.com/account/tokens)
-   - Add to GitHub repo Secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
-   - (Find Org ID and Project ID in `.vercel/project.json` after `vercel link`)
+The webhook secret must match `RAZORPAY_WEBHOOK_SECRET`. Keep all secret values in Vercel environment variables; never commit them to Git.
 
----
+Razorpay checkout signature verification confirms the checkout response. The signed subscription webhook is the source of truth for activating or changing a paid subscription.
 
-## 📦 Tech Stack
+**Account note:** Docs AI is intended to use the Beveez Tech Razorpay account. Confirm with Razorpay that the Docs AI domain and its subscription business model are approved on that merchant account. UNLIVO must use its separate merchant credentials and must not share these environment variables.
 
-| Layer        | Technology              |
-|-------------|-------------------------|
-| Framework   | Next.js 14 (App Router) |
-| Language    | TypeScript              |
-| Styling     | Tailwind CSS            |
-| Auth        | NextAuth.js (GitHub)    |
-| Database    | Supabase (PostgreSQL)   |
-| ORM         | Prisma                  |
-| Payments    | Razorpay Subscriptions  |
-| AI          | Anthropic Claude API    |
-| Hosting     | Vercel                  |
-| CI/CD       | GitHub Actions          |
+## Documentation generation
 
----
+The authenticated endpoint is:
 
-## 💰 Pricing Tiers
+```
+POST /api/generate
+```
 
-| Plan       | Price     | Docs/Month | Features                          |
-|-----------|-----------|------------|-----------------------------------|
-| Free      | ₹0        | 5          | Basic docs, 3 languages           |
-| Solo      | ₹999/mo   | 50         | All types, 20+ languages          |
-| Team      | ₹3,999/mo | Unlimited  | GitHub Action, API access, team   |
+JSON body:
 
----
+```json
+{
+  "code": "source code to document",
+  "language": "typescript",
+  "docType": "full"
+}
+```
 
-## 🔄 CI/CD Pipeline
+Supported output types: `full`, `readme`, `api`, and `inline`.
 
-Every push to `main`:
-1. GitHub Actions runs lint + type check
-2. On success, builds and deploys to Vercel production
-3. Pull requests get a preview URL commented automatically
+The endpoint requires a signed-in user, validates the language and output type, enforces the monthly plan limit server-side, stores the generated document and records token usage.
 
----
+The current language selector supports 22 languages: TypeScript, JavaScript, Python, PHP, Go, Rust, Java, C++, C#, Ruby, Swift, Kotlin, Bash, SQL, HTML, CSS, R, Scala, Dart, Elixir, Lua and Perl.
 
-## 📌 Next Steps
+## Payment and deployment checklist
 
-- [ ] Add Google OAuth as second sign-in option
-- [ ] Build public API with API key management
-- [ ] Add GitHub App for org-level integration
-- [ ] Add Slack notification on doc generation
-- [ ] Build analytics dashboard (docs generated, revenue, churn)
+Before production rollout:
+
+1. Confirm the Razorpay merchant account has approval for the Docs AI domain, currency and subscription plans.
+2. Configure the live Razorpay key ID, key secret, webhook secret and plan IDs in Vercel.
+3. Apply the reviewed Prisma schema migration to the production database.
+4. Configure the webhook URL and required subscription events in Razorpay.
+5. Test successful checkout, invalid signatures, duplicate webhook delivery, cancellation and renewal in test mode.
+6. Verify the production build and perform a controlled live-mode test after approval.
+
+The GitHub Action/API-key automation and customer-managed API key issuance are not yet considered production-ready; do not advertise them as generally available until that workflow is implemented and tested.
